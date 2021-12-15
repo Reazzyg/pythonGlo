@@ -1,5 +1,5 @@
 email = input()
-if '@' and '.' in email:
+if '@' in email and '.' in email:
     print('correct')
 else:
     print('incorrect')
