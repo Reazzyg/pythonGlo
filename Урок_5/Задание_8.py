@@ -1,3 +1,4 @@
+
 n = int(input())
 minimum = int(input())
 maximum = int(input())
