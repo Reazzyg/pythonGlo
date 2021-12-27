@@ -3,12 +3,9 @@ total = 100
 
 def calc_delivery(ammount):
     all = 0
-    if ammount > 0:
-        for i in range(ammount-1):
-            all = (ammount-1)*50
-        print(total+all)
-    elif ammount == 0:
-        print('0')
+    for i in range(ammount):
+        all = 1+(ammount*0.5)
+    print(total*all)
 
 
 print('Введите количество товаров:')

@@ -1,15 +1,14 @@
-def multiple(first_store, second_store):
-    first_store = first_store.split()
-    second_store = second_store.split()
-    for i in range(len(first_store)):
-        a = int(first_store.pop(i))
-        first_store.insert(i, a)
-    for i in range(len(second_store)):
-        a = int(second_store.pop(i))
-        second_store.insert(i, a)
-    print(max(first_store) * max(second_store))
+def take_max(store):
+    store = store.split()
+    for i in range(len(store)):
+        a = int(store.pop(i))
+        store.insert(i, a)
+    return max(store)
 
 
 first_store = input()
+first_max = take_max(first_store)
 second_store = input()
-multiple(first_store, second_store)
+second_max = take_max(second_store)
+multiple = first_max*second_max
+print(multiple)

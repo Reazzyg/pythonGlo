@@ -1,6 +1,6 @@
 num = input()
 num_storage = num.split()
-a = 0
-for i in range(len(num_storage) - 1):
-    a += num_storage.count(num_storage[i])
-print(a)
+repeat_count = []
+for n in num_storage:
+    repeat_count.append(num_storage.count(n)-1)
+print(int(sum(repeat_count)/2))
