@@ -4,7 +4,7 @@ total = 100
 def calc_delivery(ammount):
     all = 0
     for i in range(ammount):
-        all = 1+(ammount*0.5)
+        all = 1+((ammount-1)*0.5)
     print(total*all)
 
 
