@@ -43,7 +43,6 @@ def generate_password(length, chars):
 
 
 while True:
-
     print('Привет, Я генератор паролей, я задам немколько вопросв и сгенерирую пароль. \nНачнем')
     print('Сколько паролей вы хотите сгенерировать?')
     ammount = input()
@@ -82,5 +81,13 @@ while True:
         enabled_chars += russian_uppercase_letters
     if punctuation_enabled:
         enabled_chars += punctuation
-    password = generate_password(length, enabled_chars)
-    print(password)
+    for i in range(ammount):
+        password = generate_password(length, enabled_chars)
+        print(password)
+    print('Если хотить повторить генерацию паролей введите +, если не хотите введите -')
+    decision = input()
+    decision = valid_answer(decision)
+    if decision == '+':
+        continue
+    else:
+        break
