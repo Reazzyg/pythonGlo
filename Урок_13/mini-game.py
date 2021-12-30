@@ -13,10 +13,15 @@ def is_valid(user_input):
 
 
 def valid_secret(right_border):
-    if right_border.isdigit():
-        right_border = int(right_border)
-    else:
-        return False
+    while True:
+        if right_border.isdigit():
+            right_border = int(right_border)
+            break
+        else:
+            print('Введите число или цифру')
+            right_border = input()
+            continue
+    return right_border
 
 
 def secret(right_border):
@@ -29,15 +34,11 @@ print('Добро пожаловать в игру "Угадай число"')
 
 cnt = 0
 while True:
-    while True:
-        print('Введите правую границу диапазона:')
-        right_border = input()
-        if not valid_secret(right_border):
-            right_border = int(right_border)
-            secret_number = secret(right_border)
-            break
-        else:
-            continue
+    print('Введите правую границу диапазона:')
+    right_border = input()
+    right_border = valid_secret(right_border)
+    secret_number = secret(right_border)
+    cnt = 0
     while True:
         print('Введите число от 1 до', right_border)
         user_input = input()

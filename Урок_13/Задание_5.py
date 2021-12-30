@@ -2,10 +2,15 @@ import random
 
 
 def valid_secret(right_border):
-    if right_border.isdigit():
-        right_border = int(right_border)
-    else:
-        return False
+    while True:
+        if right_border.isdigit():
+            right_border = int(right_border)
+            break
+        else:
+            print('Введите число или цифру')
+            right_border = input()
+            continue
+    return right_border
 
 
 def secret(right_border):
@@ -18,15 +23,11 @@ print('Загадайте число')
 
 
 while True:
-    while True:
-        print('Введите правую границу диапазона:')
-        right_border = input()
-        if not valid_secret(right_border):
-            right_border = int(right_border)
-            secret_number = secret(right_border)
-            break
-        else:
-            continue
+    print('Введите правую границу диапазона:')
+    right_border = input()
+    right_border = valid_secret(right_border)
+    secret_number = secret(right_border)
+    cnt = 0
     store = []
     num = 1
     for i in range(num, right_border+1):

@@ -39,7 +39,6 @@ def make_store(right_border):
 
 
 def calc_attempts(value):
-    store = []
     store = make_store(right_border)
     mid = len(store) // 2
     low = 0
@@ -67,6 +66,7 @@ while True:
     secret_number = secret(right_border)
     cnt = 0
     cnt_attempts = calc_attempts(secret_number)
+
     while True:
         print('Введите число от 1 до', right_border)
         user_input = input()
@@ -75,10 +75,10 @@ while True:
         user_number = int(user_input)
 
         if secret_number > user_number:
-            print('Загаданное чилсо больше введенного')
+            print('Загаданное число больше введенного')
             cnt += 1
         elif secret_number < user_number:
-            print('Загаданное чилсо меньше введенного')
+            print('Загаданное число меньше введенного')
             cnt += 1
         else:
 
