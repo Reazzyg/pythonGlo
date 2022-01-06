@@ -1,4 +1,3 @@
-
 def create_field():
     field = []
     for i in range(3):
@@ -31,14 +30,28 @@ def win(field):
     return False
 
 
-def end_game(field):
-    if win(field):
-        return True
-
+def is_draw(field):
+    cnt = 0
     for i in range(3):
         for j in range(3):
             if field[i][j] == '*':
-                return False
+                cnt += 1
+    if cnt == 0:
+        return True
+    else:
+        return False
+
+
+def end_game(field):
+
+    if win(field):
+        return True
+
+    elif not win(field):
+        for i in range(3):
+            for j in range(3):
+                if field[i][j] == '*':
+                    return False
 
 
 def check_if_was_used(field):
@@ -112,7 +125,9 @@ while True:
         else:
             current_symbol = 'X'
     print_field(field)
-    if current_symbol == 'X':
+    if is_draw(field):
+        print('draw')
+    elif current_symbol == 'X':
         print('won  O')
     else:
         print('won X')
