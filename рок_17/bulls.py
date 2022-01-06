@@ -42,13 +42,14 @@ def valid_input(user_input):
     while True:
         if len(user_input) == len(secret_word):
             for i in range(len(user_input)):
-                if ord(user_input[i]) >= 48 and ord(user_input[i]) <= 51:
-                    if user_input.count(user_input[i]) > 1:
-                        break
-                    else:
-                        print('все цифры должны быть разными')
-                        user_input = input()
-                        continue
+                if ord(user_input[i]) >= 48 and ord(user_input[i]) <= 57:
+                    for j in range(len(user_input)):
+                        if not user_input.count(user_input[j]) > 1:
+                            break
+                        else:
+                            print('все цифры должны быть разными')
+                            user_input = input()
+                            continue
                 else:
                     print('Введите цифры от 0 до 9')
                     user_input = input()
@@ -63,18 +64,23 @@ def valid_input(user_input):
 secret_word = generate_secret_word()
 
 while True:
-    print('')
-    user_word = input()
-    user_word = valid_input(user_word)
-    bulls_count = calc_bulls_count(user_word, secret_word)
-    cows_count = calc_cows_count(user_word, secret_word)
-    print(bulls_count, 'быков', cows_count, 'коров')
-    if bulls_count == 4:
-        print('victory')
-    print(' Если хотите сыграть еще раз введите +, если не хотите введите -')
-    answer = input()
-    answer = valid_answer(answer)
-    if answer == '+':
-        continue
-    else:
-        break
+    while True:
+        print('')
+        print('Введите число из', len(secret_word), 'цифр')
+        user_word = input()
+        user_word = valid_input(user_word)
+        bulls_count = calc_bulls_count(user_word, secret_word)
+        cows_count = calc_cows_count(user_word, secret_word)
+        print(bulls_count, 'быков', cows_count, 'коров')
+        if not bulls_count == 4:
+            continue
+        elif bulls_count == 4:
+            print('victory')
+            print(' Если хотите сыграть еще раз введите +, если не хотите введите -')
+            answer = input()
+            answer = valid_answer(answer)
+            if answer == '+':
+                continue
+            elif answer == '-':
+                break
+    break
