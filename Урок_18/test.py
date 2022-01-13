@@ -1,5 +1,6 @@
 from random import randint
 import os
+from tkinter.ttk import Separator
 import jsonpickle
 
 
@@ -202,6 +203,8 @@ file_provider = FileManager()
 questionsStorage = QuestionStorage()
 userResultStorage = UserResultStorage()
 # file = open('info.txt', 'a')
+jsonpickle.set_encoder_options(
+    'json', indent=4, separators=(',', ': '), ensure_ascii=False)
 while True:
 
     questions = questionsStorage.get_all()
