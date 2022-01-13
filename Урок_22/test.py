@@ -37,24 +37,14 @@ class Question:
 
 class QuestionStorage:
     def __init__(self):
-        self.file_name = 'Урок_18/questions.json'
+        self.file_name = 'questions.json'
 
     def get_all(self):
         file_name = self.file_name
         if not file_provider.exists(self.file_name):
             questions = [
-                Question('вопрос 1', 1),
-                Question('вопрос 2', 2),
-                Question('вопрос 3', 3),
-                Question('вопрос 4', 4),
-                Question('вопрос 5', 5),
-                Question('вопрос 6', 6),
-                Question('вопрос 7', 7),
-                Question('вопрос 8', 8),
-                Question('вопрос 9', 9),
-                Question('вопрос 10', 10),
-                Question('вопрос 11', 11),
-                Question('вопрос 12', 12),
+                Question('вопрос 1', 1)
+
 
             ]
             self.save_questions(questions)
@@ -92,18 +82,20 @@ class User:
 
 class UserResultStorage:
     def __init__(self):
-        self.file_name = 'Урок_18/results.json'
+        self.file_name = 'results.json'
 
     def save(self, info):
+        user_results = []
         user_results = self.get_all()
-        info = User
         json_data = user_results.append(info)
         user_results = jsonpickle.encode(json_data)
         file_provider.writelines(self.file_name, user_results)
 
     def get_all(self):
-        data = file_provider.get(self.file_name)
-        user_results = jsonpickle.decode(data)
+        user_results = []
+        if file_provider.exists(self.file_name):
+            data = file_provider.get(self.file_name)
+            user_results = jsonpickle.decode(data)
         return user_results
     # def __init__(self, name, result):
     #     self.name = name
@@ -163,8 +155,8 @@ def show_user_results():
     right_answers_ammount = 'Кол-во правильных ответов'
     print(f'{name:10}{result:15}{right_answers_ammount:25}')
     users = userResultStorage.get_all()
-    for user in users:
-        print(f'{user.name:10}{user.result:15}{user.right_answers_ammount:25}')
+    users = jsonpickle.decode(users)
+    return users
 
 
 def valid_answer_end(answer):
