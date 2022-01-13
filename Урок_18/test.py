@@ -1,5 +1,6 @@
 from random import randint
 import os
+import jsonpickle
 
 
 class FileManager:
@@ -22,6 +23,11 @@ class FileManager:
         data = file.write('')
         file.close
 
+    def writelines(self, path, data):
+        file = open(path, 'w')
+        data = file.writelines(data)
+        file.close()
+
 
 class Question:
     def __init__(self, text, answer):
@@ -30,50 +36,34 @@ class Question:
 
 
 class QuestionStorage:
+    def __init__(self):
+        self.file_name = 'questions.json'
+
     def get_all(self):
-        file_name = 'Урок_18/questions.txt'
-        if not file_provider.exists(file_name):
+        file_name = self.file_name
+        if not file_provider.exists(self.file_name):
             questions = [
-                Question('вопрос 1', 1),
-                Question('вопрос 2', 2),
-                Question('вопрос 3', 3),
-                Question('вопрос 4', 4),
-                Question('вопрос 5', 5),
-                Question('вопрос 6', 6),
-                Question('вопрос 7', 7),
-                Question('вопрос 8', 8),
-                Question('вопрос 9', 9),
-                Question('вопрос 10', 10),
-                Question('вопрос 11', 11),
-                Question('вопрос 12', 12),
+                Question('вопрос 1', 1)
+
 
             ]
             self.save_questions(questions)
-        data = file_provider.get(file_name).strip('\n')
-        data = data.split('\n')
-        questions = []
-        for line in data:
-            values = line.split('#')
-            question = Question(values[0], int(values[1]))
-            questions.append(question)
+        data = file_provider.get(self.file_name)
+        questions = jsonpickle.decode(data)
         return questions
 
     def save_questions(self, questions):
-        for question in questions:
-            self.add(question)
+        json_data = jsonpickle.encode(questions)
+        file_provider.writelines(self.file_name, json_data)
 
     def add(self, question):
-        file_name = 'Урок_18/questions.txt'
-        data = f'{question.text}#{question.answer}\n'
-        file_provider.add(file_name, data)
+        questions = self.get_all()
+        questions.append(question)
+        self.save_questions(questions)
 
     def remove(self, index):
         questions = self.get_all()
         questions.pop(index)
-
-        file_name = 'Урок_18/questions.txt'
-        file_provider.clear(file_name)
-
         self.save_questions(questions)
 
 
@@ -91,23 +81,22 @@ class User:
 
 
 class UserResultStorage:
-    def save(self, user):
-        file_name = 'Урок_18/results.txt'
-        file_provider = FileManager()
-        data = f'{user.name}#{user.result}#{user.right_answers_ammount}\n'
-        file_provider.add(file_name, data)
+    def __init__(self):
+        self.file_name = 'results.json'
+
+    def save(self, info):
+        user_results = []
+        user_results = self.get_all()
+        user_results.append(info)
+        json_data = jsonpickle.encode(user_results)
+        file_provider.writelines(self.file_name, json_data)
 
     def get_all(self):
-        file_name = 'Урок_18/results.txt'
-        file_provider = FileManager()
-        data = file_provider.get(file_name).strip('\n')
-        data = data.split('\n')
-        users = []
-        for line in data:
-            values = line.split('#')
-            user = User(values[0], values[1], values[2])
-            users.append(user)
-        return users
+        user_results = []
+        if file_provider.exists(self.file_name):
+            data = file_provider.get(self.file_name)
+            user_results = jsonpickle.decode(data)
+        return user_results
     # def __init__(self, name, result):
     #     self.name = name
     #     self.result = result
@@ -241,7 +230,6 @@ while True:
         questions.pop(random_index)
     result = calc_results(qeutions_ammount, user.right_answers_ammount)
     user.set_result(result)
-
     userResultStorage.save(user)
 
     print('Правильных ответов:', user.right_answers_ammount)
