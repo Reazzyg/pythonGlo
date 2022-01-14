@@ -71,11 +71,25 @@ class RandomPointMovableBall(RandomPointBall):
         self.vy = speed_array[random.randint(0, len(speed_array)-1)]
 
 
-def show_text(text):
+class BilliardBall(RandomPointMovableBall):
+    def __init__(self, display):
+        super().__init__(display)
+        self.color = pygame.Color('red')
+
+    def go(self):
+        super().go()
+        width, height = self.display.get_size()
+        if self.center_x <= self.radius or self.center_x >= width - self.radius:
+            self.vx = -self.vx
+        if self.center_y <= self.radius or self.center_y >= height - self.radius:
+            self.vy = -self.vy
+
+
+def show_text(text, x, y):
     font = pygame.font.Font(None, 48)
     text = font.render(text, True,  (0, 128, 0))
     text_field = text.get_rect()
-    text_field.center = (30, 30)
+    text_field.center = (x, y)
     display.blit(text, text_field)
 
 
@@ -101,26 +115,27 @@ height = 800
 display = pygame.display.set_mode((width, height))
 display.fill(pygame.Color('white'))
 balls_caught_counter = 0
+cnt = 0
 balls = []
 for i in range(10):
-    ball = RandomPointMovableBall(display)
+    ball = BilliardBall(display)
     ball.show()
     balls.append(ball)
 pygame.display.flip()
 
-time.sleep(2)
+time.sleep(1)
 
 clock = pygame.time.Clock()
 while True:
-
+    display.fill(pygame.Color('white'))
     event_list = pygame.event.get()
     for event in event_list:
         if event.type == pygame.QUIT:
             pygame.quit()
         if event.type == pygame.MOUSEBUTTONDOWN:
-            display.fill(pygame.Color('white'))
-            pygame.display.flip()
             for ball in balls:
+                display.fill(pygame.Color('white'))
+                pygame.display.flip()
                 mouse_position = pygame.mouse.get_pos()
                 mouse_position_x = mouse_position[0]
                 mouse_position_y = mouse_position[1]
@@ -131,8 +146,17 @@ while True:
                     ball.stop()
                     # if ball_coord_x > width - 30 or ball_coord_x < 30 or ball_coord_y > height - 30 or ball_coord_y < 30:
                     balls_caught_counter += 1
-        show_text(str(balls_caught_counter))
+        show_text(str(balls_caught_counter), 30, 30)
     for ball in balls:
         ball.move()
+    for ball in balls:
+
+        ball_coords = ball.get_coords()
+        ball_coord_x = ball_coords[0]
+        ball_coord_y = ball_coords[1]
+        ball_radius = 30
+        if ball_coord_x > width - ball_radius+1:
+            cnt += 1
+            show_text(str(cnt), 950, 400)
     pygame.display.flip()
     clock.tick(60)
