@@ -1,6 +1,5 @@
 from random import randint
 import os
-from tkinter.ttk import Separator
 import jsonpickle
 
 
@@ -88,9 +87,9 @@ class UserResultStorage:
     def save(self, info):
         user_results = []
         user_results = self.get_all()
-        user_results.append(info)
-        json_data = jsonpickle.encode(user_results)
-        file_provider.writelines(self.file_name, json_data)
+        json_data = user_results.append(info)
+        user_results = jsonpickle.encode(json_data)
+        file_provider.writelines(self.file_name, user_results)
 
     def get_all(self):
         user_results = []
@@ -156,8 +155,8 @@ def show_user_results():
     right_answers_ammount = 'Кол-во правильных ответов'
     print(f'{name:10}{result:15}{right_answers_ammount:25}')
     users = userResultStorage.get_all()
-    for user in users:
-        print(f'{user.name:10}{user.result:15}{user.right_answers_ammount:25}')
+    users = jsonpickle.decode(users)
+    return users
 
 
 def valid_answer_end(answer):
@@ -203,8 +202,6 @@ file_provider = FileManager()
 questionsStorage = QuestionStorage()
 userResultStorage = UserResultStorage()
 # file = open('info.txt', 'a')
-jsonpickle.set_encoder_options(
-    'json', indent=4, separators=(',', ': '), ensure_ascii=False)
 while True:
 
     questions = questionsStorage.get_all()
