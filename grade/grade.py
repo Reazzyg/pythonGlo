@@ -1,5 +1,4 @@
 import os
-from xml.etree.ElementTree import TreeBuilder
 import jsonpickle
 
 
@@ -249,3 +248,5 @@ while True:
     if answer == 6:
         print('Вы вышли из программы')
         break
+    else:
+        print('Выберите один из пунктов меню, пожалуйста')
