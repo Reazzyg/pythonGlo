@@ -226,17 +226,23 @@ def valid_class(class_name):
             print('Введите номер класса корректно в формате "1-а"')
             class_name = input()
             continue
-        elif class_store[1].isdigit():
-            print('Введите номер класса корректно в формате "1-а"')
-            class_name = input()
-            continue
-        elif not class_store[1].isdigit():
-            if len(class_store[1]) != 1:
+        elif class_store[0].isdigit():
+            class_store[0] = int(class_store[0])
+            if class_store[0] > 11 or class_store[0] < 1:
                 print('Введите номер класса корректно в формате "1-а"')
                 class_name = input()
                 continue
-            elif len(class_store[1]) == 1:
-                break
+            elif class_store[1].isdigit():
+                print('Введите номер класса корректно в формате "1-а"')
+                class_name = input()
+                continue
+            elif not class_store[1].isdigit():
+                if len(class_store[1]) != 1:
+                    print('Введите номер класса корректно в формате "1-а"')
+                    class_name = input()
+                    continue
+                elif len(class_store[1]) == 1:
+                    break
     return class_name
 
 
