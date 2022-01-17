@@ -1,4 +1,5 @@
 import os
+from xml.etree.ElementTree import TreeBuilder
 import jsonpickle
 
 
@@ -57,17 +58,22 @@ class SchoolStorage:
         json_data = jsonpickle.encode(data)
         file_provider.writelines(self.file_name, json_data)
 
-    def rename(self, index, name):
+    def remove(self, index):
         school_info = self.get_all()
         school_info.pop(index)
-        school_info.insert(0, name)
         self.save_school_info()
 
-    def readress(self, index, adress):
+    def rename(self, name):
         school_info = self.get_all()
-        school_info.pop(index)
-        school_info.insert(1, adress)
-        self.save_school_info()
+        adress = school_info[0].adress
+        school_info = [School(name, adress)]
+        self.save_school_info(school_info)
+
+    def readress(self, adress):
+        school_info = self.get_all()
+        name = school_info[0].name
+        school_info = [School(name, adress)]
+        self.save_school_info(school_info)
 
 
 class Student:
@@ -108,7 +114,7 @@ class StudentsStorage:
     def remove(self, index):
         students = self.get_all()
         students.pop(index)
-        self.save_students()
+        self.save_students(students)
 
 
 def calc_students(students):
@@ -125,6 +131,12 @@ def print_menu():
     print('6. Выйти из программы')
 
 
+def show_school_info(school):
+    print(f'Название школы: {school[0].name}')
+    print(f'Адрес школы: {school[0].adress}')
+    print(f'Количество учеников: {calc_students(students)}')
+
+
 def add_new_student():
     print('Введите ФИО')
     student_name = input()
@@ -137,15 +149,37 @@ def add_new_student():
     studentsStorage.add(new_student)
 
 
-def show_all_students():
+def print_students(students):
+    for i in range(len(students)):
+        print(
+            f'{i+1:<10}{students[i].name:<45}{students[i].age:<10}{students[i].class_name:<10}')
+
+
+def show_all_students(students):
     number = 'Номер'
     name = 'Имя'
     age = 'Возраст'
     student_class = 'Класс'
-    print(f'{number:10}{name:45}{age:10}{student_class:10}')
+    print('--------------------------------------------------------------')
+    print(f'{number:<10}{name:<45}{age:<10}{student_class:<10}')
+    print_students(students)
+    print('--------------------------------------------------------------')
+
+
+def remove_student(students):
     students = studentsStorage.get_all()
-    students = jsonpickle.decode(students)
-    return students
+    while True:
+        print('--------------------------------------------------------------')
+        print('Выберите номер ученика, которого надо удалить')
+        print_students(students)
+        print('--------------------------------------------------------------')
+        user_answer = input()
+        user_answer = valid_answer_digit(user_answer)
+        if user_answer < 1 or user_answer > len(students):
+            continue
+        studentsStorage.remove(user_answer-1)
+        print(f'Ученик под номером {user_answer} успешно удален')
+        break
 
 
 def valid_answer(answer):
@@ -180,32 +214,38 @@ studentsStorage = StudentsStorage()
 while True:
     students = studentsStorage.get_all()
     students_ammuont = calc_students(students)
+    school_info = schoolStorage.get_all()
     print('Меню')
     print_menu()
     print('Выберите пункт меню')
     answer = input()
     answer = valid_answer_digit(answer)
-    print(students[0], students[1])
     if answer == 1:
-        school_info = schoolStorage.get_all()
-        continue
+        show_school_info(school_info)
     if answer == 2:
+        print('--------------------------------------------------------------')
         print('1. Изменить название школы')
         print('2. Изменить адрес школы')
         print('3. Вернуться обратно')
+        print('--------------------------------------------------------------')
         answer = input()
         answer = valid_answer_digit(answer)
         if answer == 1:
             print('Введите новое название школы')
             school_name = input()
-            schoolStorage.rename(answer - 1, school_name)
+            schoolStorage.rename(school_name)
         if answer == 2:
             print('Введите новый адрес школы')
             school_adress = input()
-            schoolStorage.rename(answer - 1, school_adress)
+            schoolStorage.readress(school_adress)
         if answer == 3:
             continue
     if answer == 3:
-        show_all_students()
+        show_all_students(students)
     if answer == 4:
         add_new_student()
+    if answer == 5:
+        remove_student(students)
+    if answer == 6:
+        print('Вы вышли из программы')
+        break
