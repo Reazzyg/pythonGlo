@@ -247,7 +247,7 @@ def valid_class(class_name):
                     continue
                 elif not class_store[1].isdigit():
                     if len(class_store[1]) != 1:
-                        print('Введите Номер класса в формате "1" или "1-a"')
+                        print('В нашей школе у класса может быть только одна буква')
                         class_name = input()
                         continue
                     elif len(class_store[1]) == 1:
