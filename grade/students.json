@@ -1,0 +1,32 @@
+[
+    {
+        "py/object": "__main__.Student",
+        "name": "Мудров Семен Александрович",
+        "age": 16,
+        "class_name": "9a"
+    },
+    {
+        "py/object": "__main__.Student",
+        "name": "Мудров Евгений Александрович",
+        "age": 15,
+        "class_name": "8г"
+    },
+    {
+        "py/object": "__main__.Student",
+        "name": "Мудров Александр Александрович",
+        "age": 17,
+        "class_name": "10б"
+    },
+    {
+        "py/object": "__main__.Student",
+        "name": "Мудров Леонид Александрович",
+        "age": 13,
+        "class_name": "6a"
+    },
+    {
+        "py/object": "__main__.Student",
+        "name": "Мудров Антон Александрович",
+        "age": 10,
+        "class_name": "3"
+    }
+]
