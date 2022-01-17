@@ -200,7 +200,7 @@ def valid_answer_digit(answer):
             answer = int(answer)
             break
         else:
-            print('Введить число от 1 до 6')
+            print('Выберите один из пунктов меню, пожалуйста')
             answer = input()
             continue
     return answer
