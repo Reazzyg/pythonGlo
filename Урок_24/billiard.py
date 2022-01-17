@@ -1,3 +1,4 @@
+from operator import truediv
 import pygame
 import random
 import time
@@ -39,7 +40,8 @@ class Ball:
     def get_coords(self):
         x = self.center_x
         y = self.center_y
-        return x, y
+        radius = self.radius
+        return x, y, radius
 
     def show_speed(self):
         return self.vx, self.vy
@@ -85,7 +87,8 @@ class BilliardBall(RandomPointMovableBall):
             self.vy = -self.vy
 
 
-def show_text(text, x, y):
+def show_text(display, text, x, y):
+    pygame.font.init()
     font = pygame.font.Font(None, 48)
     text = font.render(text, True,  (0, 128, 0))
     text_field = text.get_rect()
@@ -108,55 +111,71 @@ def is_in_field(ball_coord_x, ball_coord_y, width, height):
         return True
 
 
-pygame.init()
+def run_game():
+    pygame.init()
 
-width = 1000
-height = 800
-display = pygame.display.set_mode((width, height))
-display.fill(pygame.Color('white'))
-balls_caught_counter = 0
-cnt = 0
-balls = []
-for i in range(10):
-    ball = BilliardBall(display)
-    ball.show()
-    balls.append(ball)
-pygame.display.flip()
-
-time.sleep(1)
-
-clock = pygame.time.Clock()
-while True:
+    width = 1000
+    height = 800
+    display = pygame.display.set_mode((width, height))
     display.fill(pygame.Color('white'))
-    event_list = pygame.event.get()
-    for event in event_list:
-        if event.type == pygame.QUIT:
-            pygame.quit()
-        if event.type == pygame.MOUSEBUTTONDOWN:
-            for ball in balls:
-                display.fill(pygame.Color('white'))
-                pygame.display.flip()
-                mouse_position = pygame.mouse.get_pos()
-                mouse_position_x = mouse_position[0]
-                mouse_position_y = mouse_position[1]
-                ball_coords = ball.get_coords()
-                ball_coord_x = ball_coords[0]
-                ball_coord_y = ball_coords[1]
-                if is_in_circle(mouse_position_x, mouse_position_y, ball_coord_x, ball_coord_y, 30) and is_in_field(ball_coord_x, ball_coord_y, width, height):
-                    ball.stop()
-                    # if ball_coord_x > width - 30 or ball_coord_x < 30 or ball_coord_y > height - 30 or ball_coord_y < 30:
-                    balls_caught_counter += 1
-        show_text(str(balls_caught_counter), 30, 30)
-    for ball in balls:
-        ball.move()
-    for ball in balls:
+    balls_caught_counter = 0
+    cnt_left_border = 0
+    cnt_top_border = 0
+    cnt_right_border = 0
+    cnt_bottom_border = 0
 
-        ball_coords = ball.get_coords()
-        ball_coord_x = ball_coords[0]
-        ball_coord_y = ball_coords[1]
-        ball_radius = 30
-        if ball_coord_x > width - ball_radius+1:
-            cnt += 1
-            show_text(str(cnt), 950, 400)
+    balls = []
+    for i in range(10):
+        ball = BilliardBall(display)
+        ball.show()
+        balls.append(ball)
     pygame.display.flip()
-    clock.tick(60)
+
+    time.sleep(1)
+    run = True
+    clock = pygame.time.Clock()
+    while run:
+        display.fill(pygame.Color('white'))
+        event_list = pygame.event.get()
+        for event in event_list:
+            if event.type == pygame.QUIT:
+                run = not run
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                for ball in balls:
+                    display.fill(pygame.Color('white'))
+                    pygame.display.flip()
+                    mouse_position = pygame.mouse.get_pos()
+                    mouse_position_x = mouse_position[0]
+                    mouse_position_y = mouse_position[1]
+                    ball_coords = ball.get_coords()
+                    ball_coord_x = ball_coords[0]
+                    ball_coord_y = ball_coords[1]
+                    if is_in_circle(mouse_position_x, mouse_position_y, ball_coord_x, ball_coord_y, 30) and is_in_field(ball_coord_x, ball_coord_y, width, height):
+                        ball.stop()
+                        # if ball_coord_x > width - 30 or ball_coord_x < 30 or ball_coord_y > height - 30 or ball_coord_y < 30:
+                        balls_caught_counter += 1
+            show_text(display, str(balls_caught_counter), 30, 30)
+        for ball in balls:
+            ball.move()
+        for ball in balls:
+            ball_coords = ball.get_coords()
+            ball_coord_x = ball_coords[0]
+            ball_coord_y = ball_coords[1]
+            ball_radius = ball_coords[2]
+            if ball_coord_x <= ball_radius:
+                cnt_left_border += 1
+            show_text(display, 'left: '+str(cnt_left_border), 100, 500)
+            if ball_coord_x >= width - ball_radius:
+                cnt_right_border += 1
+            show_text(display, 'right: '+str(cnt_right_border), 900, 500)
+            if ball_coord_y <= ball_radius:
+                cnt_top_border += 1
+            show_text(display, 'top: ' + str(cnt_top_border), 500, 100)
+            if ball_coord_y >= height - ball_radius:
+                cnt_bottom_border += 1
+            show_text(display, 'bottom: ' + str(cnt_bottom_border), 500, 700)
+        pygame.display.flip()
+        clock.tick(60)
+
+
+run_game()
