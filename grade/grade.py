@@ -142,7 +142,7 @@ def add_new_student():
     print('Введите Возраст')
     student_age = input()
     student_age = valid_age(student_age)
-    print('Введите Номер класса в формате "1-a"')
+    print('Введите Номер класса в формате "1" или "1-a"')
     student_class = input()
     student_class = valid_class(student_class)
     new_student = Student(student_name, student_age, student_class)
@@ -221,28 +221,43 @@ def valid_age(age):
 
 def valid_class(class_name):
     while True:
-        class_store = class_name.split('-')
-        if not class_store[0].isdigit():
-            print('Введите номер класса корректно в формате "1-а"')
-            class_name = input()
-            continue
-        elif class_store[0].isdigit():
-            class_store[0] = int(class_store[0])
-            if class_store[0] > 11 or class_store[0] < 1:
-                print('Введите номер класса корректно в формате "1-а"')
+        if class_name.isdigit():
+            class_name = int(class_name)
+            if class_name > 11 or class_name < 1:
+                print('В нашей школе есть классы с 1 по 11 включительно')
                 class_name = input()
                 continue
-            elif class_store[1].isdigit():
-                print('Введите номер класса корректно в формате "1-а"')
+            else:
+                break
+        else:
+            class_store = class_name.split('-')
+            if not class_store[0].isdigit():
+                print('Введите Номер класса в формате "1" или "1-a"')
                 class_name = input()
                 continue
-            elif not class_store[1].isdigit():
-                if len(class_store[1]) != 1:
-                    print('Введите номер класса корректно в формате "1-а"')
+            elif class_store[0].isdigit():
+                class_store[0] = int(class_store[0])
+                if class_store[0] > 11 or class_store[0] < 1:
+                    print('В нашей школе есть классы с 1 по 11 включительно')
                     class_name = input()
                     continue
-                elif len(class_store[1]) == 1:
-                    break
+                elif class_store[1].isdigit():
+                    print('Введите Номер класса в формате "1" или "1-a"')
+                    class_name = input()
+                    continue
+                elif not class_store[1].isdigit():
+                    if len(class_store[1]) != 1:
+                        print('Введите Номер класса в формате "1" или "1-a"')
+                        class_name = input()
+                        continue
+                    elif len(class_store[1]) == 1:
+                        if ord(class_store[1]) < 1072 or ord(class_store[1]) > 1103:
+                            print(
+                                'В нашей школе у классов могут быть только русские буквы')
+                            class_name = input()
+                            continue
+                        else:
+                            break
     return class_name
 
 
