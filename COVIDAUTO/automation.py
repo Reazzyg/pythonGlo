@@ -1,5 +1,4 @@
 import os
-from attr import validate
 import jsonpickle
 
 
@@ -72,19 +71,8 @@ class ChildStorage:
 
     def get_all(self):
         children = []
-        if not file_provider.exists(self.file_name):
-            print('Введите имя:')
-            name = input()
-            print('Введите дату рождения:')
-            bday = input()
-            print('Введите адрес:')
-            adress = input()
-            print('Введите номер телефона:')
-            phone = input()
-            children = [
-                Child(name, bday, adress, phone)
-            ]
-            self.save_children(children)
+        data = file_provider.get(self.file_name)
+        children = jsonpickle.decode(data)
         return children
 
     def save_children(self, data):
@@ -212,21 +200,6 @@ def show_all_specialists(specialists):
     print('--------------------------------------------------------------')
 
 
-# def print_children(children):
-#     for i in range(len(children)):
-#         print(
-#             f'{i+1:<10}{children[i].name:<45}')
-
-
-# def show_all_children(children):
-#     number = 'Номер'
-#     name = 'Имя'
-#     print('--------------------------------------------------------------')
-#     print(f'{number:<10}{name:<45}')
-#     print_children(children)
-#     print('--------------------------------------------------------------')
-
-
 def validate_digit(answer):
     while True:
         if answer.isdigit():
@@ -278,18 +251,22 @@ if answer == '+':
         new_specialist = Specialist(specialist_name)
         specialistStorage.add(new_specialist)
 
-# Создаем бд для детей, если бд нет, то сразу спросит все данные для добавления первого ребенка
+
+# Создаем бд для детей
+childStorage = ChildStorage()
+children = childStorage.get_all()
+
+
 while True:
     doctors = doctorStorage.get_all()
     specialists = specialistStorage.get_all()
-    childStorage = ChildStorage()
     children = childStorage.get_all()
     add_child()
     print('Введите эпид. анамнез:')
     anamnez = input()
     print('Введите показания для исследования(контингент):')
     indications = input()
-    print('Если материал взят при амбулаторном лучении и наблюдении введите "+", если нет - введите "-"')
+    print('Если материал взят при амбулаторном лечении и наблюдении введите "+", если нет - введите "-"')
     material = input()
     print('Выберите врача, назначившего лечение:')
     show_all_doctors(doctors)
