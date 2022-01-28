@@ -1,6 +1,4 @@
 import os
-from re import search
-from time import time
 import jsonpickle
 
 
@@ -56,10 +54,16 @@ class ReferralStorage:
         self.file_name = 'referrals.json'
 
     def get_all(self):
-        referrals = []
         if not file_provider.exists(self.file_name):
             child = add_child()
-            add_referral(child.name, child.bday, child.adress, child.phone)
+            referral = add_referral(
+                child.name, child.bday, child.adress, child.phone)
+            referrals = [
+                Referral(referral.name, referral.bday, referral.adress, referral.phone, referral.anamnez, referral.indications,
+                         referral.material, referral.time, referral.doctor, referral.specialist, referral.date_taken, referral.date_send, referral.agreance)
+
+            ]
+            self.save_referrals(referrals)
         data = file_provider.get(self.file_name)
         referrals = jsonpickle.decode(data)
         return referrals
@@ -228,7 +232,7 @@ def add_referral(name, bday, adress, phone):
     new_referral = Referral(name, bday, adress, phone,
                             anamnez, indications, material, time, doctor, specialist, date_taken, date_send, agreance)
     referralStorage.add(new_referral)
-
+    return new_referral
 #  выбираем нужного врача из доступного списка(бд)
 
 
@@ -342,6 +346,7 @@ children = childStorage.get_all()
 
 # Создаем бд направлений, при первом запуске будет создано первое направление
 referralStorage = ReferralStorage()
+referrals = referralStorage.get_all()
 
 while True:
     doctors = doctorStorage.get_all()
@@ -350,3 +355,4 @@ while True:
     referrals = referralStorage.get_all()
     child = add_child()
     add_referral(child.name, child.bday, child.adress, child.phone)
+    print('end')
