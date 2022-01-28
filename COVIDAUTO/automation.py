@@ -1,4 +1,6 @@
 import os
+from re import search
+from time import time
 import jsonpickle
 
 
@@ -27,19 +29,26 @@ class FileManager:
         data = file.writelines(data)
         file.close()
 
+# Создаем объект "направление"
+
 
 class Referral:
-    def __init__(self, child, anamnez, indications, material, search, doctor, specialist, date_taken, date_send, agreance):
-        self.child = child
+    def __init__(self, name, bday, adress, phone, anamnez, indications, material, time, doctor, specialist, date_taken, date_send, agreance):
+        self.name = name
+        self.bday = bday
+        self.adress = adress
+        self.phone = phone
         self.anamnez = anamnez
         self.indications = indications
         self.material = material
-        self.search = search
+        self.time = time
         self.doctor = doctor
         self.specialist = specialist
         self.date_taken = date_taken
         self.date_send = date_send
         self.agreance = agreance
+
+# Создаем хранилище направлений, возможность их сохранять и добавлять в хранилище
 
 
 class ReferralStorage:
@@ -48,6 +57,9 @@ class ReferralStorage:
 
     def get_all(self):
         referrals = []
+        if not file_provider.exists(self.file_name):
+            child = add_child()
+            add_referral(child.name, child.bday, child.adress, child.phone)
         data = file_provider.get(self.file_name)
         referrals = jsonpickle.decode(data)
         return referrals
@@ -56,6 +68,13 @@ class ReferralStorage:
         json_data = jsonpickle.encode(data)
         file_provider.writelines(self.file_name, json_data)
 
+    def add(self, referral):
+        referrals = self.get_all()
+        referrals.append(referral)
+        self.save_referrals(referrals)
+
+# создаем объект "ребенок"
+
 
 class Child:
     def __init__(self, name, bday, adress, phone):
@@ -63,6 +82,8 @@ class Child:
         self.bday = bday
         self.adress = adress
         self.phone = phone
+
+# создаем хранилище детей
 
 
 class ChildStorage:
@@ -74,20 +95,26 @@ class ChildStorage:
         data = file_provider.get(self.file_name)
         children = jsonpickle.decode(data)
         return children
+# сохранение детей
 
     def save_children(self, data):
         json_data = jsonpickle.encode(data)
         file_provider.writelines(self.file_name, json_data)
+# добавление детей в хранилище
 
     def add(self, child):
         children = self.get_all()
         children.append(child)
         self.save_children(children)
 
+# создаем объект врач
+
 
 class Doctor:
     def __init__(self, name):
         self.name = name
+
+# создаем хранилище врачей
 
 
 class DoctorStorage:
@@ -105,25 +132,32 @@ class DoctorStorage:
         data = file_provider.get(self.file_name)
         doctors = jsonpickle.decode(data)
         return doctors
+# добавляем врача
 
     def add(self, doctor):
         doctors = self.get_all()
         doctors.append(doctor)
         self.save_doctors(doctors)
+# созхраняем
 
     def save_doctors(self, doctors):
         json_data = jsonpickle.encode(doctors)
         file_provider.writelines(self.file_name, json_data)
+# убрать врача
 
     def remove(self, index):
         doctors = self.get_all()
         doctors.pop(index)
         self.save_doctors(doctors)
 
+# создаем объект сепциалист
+
 
 class Specialist:
     def __init__(self, name):
         self.name = name
+
+# создаем хранилище специалистов
 
 
 class SpecialistStorage:
@@ -141,20 +175,25 @@ class SpecialistStorage:
         data = file_provider.get(self.file_name)
         specialists = jsonpickle.decode(data)
         return specialists
+# добавление специалистов
 
     def add(self, specialist):
         specialists = self.get_all()
         specialists.append(specialist)
         self.save_specialists(specialists)
+# сохранение специалистов
 
     def save_specialists(self, specialists):
         json_data = jsonpickle.encode(specialists)
         file_provider.writelines(self.file_name, json_data)
+# убрать специалиста
 
     def remove(self, index):
         specialists = self.get_all()
         specialists.pop(index)
         self.save_specialists(specialists)
+
+# добавляем нового ребенка в бд
 
 
 def add_child():
@@ -168,6 +207,49 @@ def add_child():
     phone = input()
     new_child = Child(name, bday, adress, phone)
     childStorage.add(new_child)
+    return new_child
+
+# добавляем новое направление в бд
+
+
+def add_referral(name, bday, adress, phone):
+    print('Введите эпид. анамнез:')
+    anamnez = input()
+    print('Введите показания для исследования(контингент):')
+    indications = input()
+    material = "+"
+    print('Если обследование на COVID-19 проводится впервые введите "+", если нет - введите "-"')
+    time = input()
+    doctor = choose_doctor(doctors)
+    specialist = choose_specialist(specialists)
+    print('Введите дату забора биоматериала')
+    date_taken = date_send = input()
+    agreance = 'Получено согласие пациента на передачу в страховую медицинскую организацию и обработку информации о результатха тестирования на новую коронавирусню инфекцию из лабораторий, осуществляющих ПЦР, и отправку страховой медицинской организацией смс-уведомления о результате тестирования'
+    new_referral = Referral(name, bday, adress, phone,
+                            anamnez, indications, material, time, doctor, specialist, date_taken, date_send, agreance)
+    referralStorage.add(new_referral)
+
+#  выбираем нужного врача из доступного списка(бд)
+
+
+def choose_doctor(doctors):
+    print('Выберите врача, назначившего лечение:')
+    show_all_doctors(doctors)
+    doctor_index = int(input())
+    doctor = doctors[doctor_index - 1].name
+    return doctor
+
+# выбираем нужного специалиста из доступного списка(бд)
+
+
+def choose_specialist(specialists):
+    print('Выберите специалиста, осуществляющего забор биоматериала:')
+    show_all_specialists(specialists)
+    specialist_index = int(input())
+    specialist = specialists[specialist_index-1].name
+    return specialist
+
+# вывод всех врачей
 
 
 def print_doctors(doctors):
@@ -183,6 +265,8 @@ def show_all_doctors(doctors):
     print(f'{number:<10}{name:<45}')
     print_doctors(doctors)
     print('--------------------------------------------------------------')
+
+# вывод всех специалистов
 
 
 def print_specialists(specialists):
@@ -256,21 +340,13 @@ if answer == '+':
 childStorage = ChildStorage()
 children = childStorage.get_all()
 
+# Создаем бд направлений, при первом запуске будет создано первое направление
+referralStorage = ReferralStorage()
 
 while True:
     doctors = doctorStorage.get_all()
     specialists = specialistStorage.get_all()
     children = childStorage.get_all()
-    add_child()
-    print('Введите эпид. анамнез:')
-    anamnez = input()
-    print('Введите показания для исследования(контингент):')
-    indications = input()
-    print('Если материал взят при амбулаторном лечении и наблюдении введите "+", если нет - введите "-"')
-    material = input()
-    print('Выберите врача, назначившего лечение:')
-    show_all_doctors(doctors)
-    doctor_index = input()
-    print('Выберите специалиста, осуществляющего забор биоматериала:')
-    show_all_specialists(specialists)
-    spesialist_index = input()
+    referrals = referralStorage.get_all()
+    child = add_child()
+    add_referral(child.name, child.bday, child.adress, child.phone)
